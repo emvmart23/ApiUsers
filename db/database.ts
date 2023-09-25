@@ -1,18 +1,36 @@
-import { connect } from "mongoose";
-// import dotenv from "dotenv";
+import * as mongoDB from "mongodb";
+import * as dotenv from "dotenv";
 
-// dotenv.config()
+export const collections: { user?: mongoDB.Collection } = {};
 
-export const ConnectDatabase = async () => {
+dotenv.config();
+
+export async function ConnectDatabase() {
   try {
-    if (!process.env.MONGO_URI) {
-        console.log('variable',process.env.MONGO_URI)
-      throw new Error("url not defined");
+    if (
+      !process.env.DB_CONN_STRING ||
+      !process.env.DB_NAME ||
+      !process.env.USER_COLLECTION_NAME
+    ) {
+      throw new Error("URL not defined");
     }
 
-    const conn = await connect(process.env.MONGO_URI);
-    console.log("conectado a la base de datos");
+    const client: mongoDB.MongoClient = new mongoDB.MongoClient(
+      process.env.DB_CONN_STRING || ''
+    );
+
+    await client.connect();
+
+    const db: mongoDB.Db = client.db(process.env.DB_NAME || '');
+
+    const userCollection: mongoDB.Collection = db.collection(
+      process.env.USER_COLLECTION_NAME || ''
+    );
+
+    collections.user = userCollection;
+
+    console.log(`conected to database ${db.databaseName}`);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
-};
+}
