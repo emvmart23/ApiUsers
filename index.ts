@@ -1,15 +1,20 @@
 import express, { Request, Response, Application } from "express";
 import { ConnectDatabase } from "./db/database";
-
-
-ConnectDatabase()
+import bodyParser from "body-parser";
+import cors from "cors";
+import { defaultRoute } from "./routes/routes";
 
 const app: Application = express();
+ConnectDatabase();
 
-app.get('/', ( req: Request, res: Response) => {
-    res.send('Welcome max')
-})
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.listen(3000, () => {
-    console.log('corriendo el puerto 3000')
-})
+app.use("/api", defaultRoute);
+
+const PORT = process.env.Port || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
