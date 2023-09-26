@@ -8,6 +8,4 @@ interface User {
   numberPhone?: string;
 }
 
-export default User;
-
-
+export { User };
