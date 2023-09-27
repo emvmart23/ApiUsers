@@ -12,7 +12,7 @@ export async function ConnectDatabase() {
       !process.env.DB_NAME ||
       !process.env.USER_COLLECTION_NAME
     ) {
-      throw new Error("URL not defined");
+      throw new Error("environment variables not defined");
     }
 
     const client: mongoDB.MongoClient = new mongoDB.MongoClient(
